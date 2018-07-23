@@ -28,7 +28,7 @@ s.license      = "MIT"
 
 s.author = { "wangkecheng" => "670894753@qq.com" }
 
-s.source = { :git => "https://github.com/wangkecheng/WSJsonToModel.git", :tag => "#{s.version}" }
+s.source = { :git => "https://github.com/wangkecheng/WSJsonToModel.git"}
 
 s.source_files =  "WSJsonToModel/*.swift"
 
