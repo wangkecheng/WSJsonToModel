@@ -30,7 +30,7 @@ s.author = { "wangkecheng" => "670894753@qq.com" }
 
 s.source = { :git => "https://github.com/wangkecheng/WSJsonToModel.git"}
 
-s.source_files = "NSObjectJsonRuntime.swift'
+s.source_files = "NSObjectJsonRuntime.swift"
 
 s.requires_arc = true
 
