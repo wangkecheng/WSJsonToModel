@@ -11,7 +11,7 @@ import Foundation
 
 var SetResultKeyToObjKeyArr = "setResultKeyToObjKeyArr"
 var SetObjClassInArrayArr = "setObjClassInArrayArr"
-extension NSObject {
+public extension NSObject {
     
     func setResultKeyToObjKeyArr(keyValueArr:[[String:String]]){ //如果 返回数据 key 是 id 及ida id->ID ida -> IDNew   就把需要转换的字典放入 数组中
         objc_setAssociatedObject(self, &SetResultKeyToObjKeyArr, keyValueArr, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)

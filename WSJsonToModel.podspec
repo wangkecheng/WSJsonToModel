@@ -9,9 +9,9 @@ Pod::Spec.new do |s|
 
 s.name = "WSJsonToModel"
 
-s.version = "1.0.0"
+s.version = "1.0.1"
 
-s.summary = "upload"
+s.summary = "使用public修饰符解决不能调用类方法的问题"
 
 s.platform     = :ios, "9.0"
 
