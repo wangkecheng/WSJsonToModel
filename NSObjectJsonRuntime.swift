@@ -153,7 +153,7 @@ public extension NSObject {
         }
     }
     
-    internal  class func allProperties(resultKeyToObjKeyArr:[[String:String]]?) -> [RutimeProperty]?{
+    class func allProperties(resultKeyToObjKeyArr:[[String:String]]?) -> [RutimeProperty]?{
         let className = NSString.init(cString: class_getName(self), encoding: String.Encoding.utf8.rawValue)
         if className?.length == 0 || className!.isEqual(to: "NSObject"){//不用为NSObject的属性赋值
             return nil
@@ -176,7 +176,7 @@ public extension NSObject {
     }
 }
 
-class RutimeProperty:NSObject{
+public class RutimeProperty:NSObject{
     var propertyName:NSString!  //属性名字 可能是id
     var propertyNameKey:NSString!  //属性名字 转换后的名字 id -> ID
     
@@ -249,7 +249,7 @@ class RutimeProperty:NSObject{
     }
 }
 
-func isFoundtion(className:NSString) -> Bool {
+public func isFoundtion(className:NSString) -> Bool {
     if className.hasPrefix("NS"){
         return true
     }
@@ -268,14 +268,14 @@ func isFoundtion(className:NSString) -> Bool {
     return false
 }
 //获取工程的名字
-func getBundleName() -> String{
+public func getBundleName() -> String{
     var bundlePath = Bundle.main.bundlePath
     bundlePath = bundlePath.components(separatedBy:"/").last!
     bundlePath = bundlePath.components(separatedBy:".").first!
     return bundlePath
 }
 //通过类名返回一个AnyClass
-func getClassWitnClassName(name:String) ->AnyClass?{
+public func getClassWitnClassName(name:String) ->AnyClass?{
     let type = getBundleName() + "." + name
     return NSClassFromString(type)
 }
