@@ -21,7 +21,7 @@ public extension NSObject {
         if objc == nil{
             return Optional.none
         }
-        return (objc as! [[String:String]])
+        return  (objc as! [[String:String]])
     }
     
     func setObjClassInArrayArr(keyValueArr:[[String:String]]){//数组模型的映射 ，比如 arrModel 里边装的是User模型 及 arrModel1装User1 那么映射是 [["arrModel":"User"],["arrModel1":"User1"]]
@@ -29,7 +29,7 @@ public extension NSObject {
     }
     func getObjClassInArrayArr() -> [[String:String]]? {
         let objc = objc_getAssociatedObject(self, &SetObjClassInArrayArr)
-        if objc  == nil{
+        if objc == nil{
             return Optional.none
         }
         return  (objc as! [[String:String]])
@@ -49,11 +49,17 @@ public extension NSObject {
     }
     //字典转 -> 模型 传字典 映射属性 映射数组
     class func objcByKeyValues(keyValue:NSDictionary?,resultKeyToObjKeyArr:[[String:String]]?,objClassInArrayArr:[[String:String]]?) -> AnyObject?{
-        
-        if keyValue == Optional.none{//传值为空，不允许转换
+        var dict = keyValue
+        if dict?.classForCoder == NSString.self{//是jsonStr 转换为字典
+            let jsonData = (dict as! NSString).data(using: String.Encoding.utf8.rawValue)
+            if let dict1 = try? JSONSerialization.jsonObject(with: jsonData!, options: JSONSerialization.ReadingOptions.mutableContainers){
+                dict = (dict1 as! NSDictionary)
+            }
+        }
+        if dict == Optional.none{//传值为空，不允许转换
             return Optional.none
         }
-        if keyValue?.classForCoder != NSDictionary.self && keyValue?.classForCoder != [String:String].self{//传入的不是字典不允许转换
+        if dict?.classForCoder != NSDictionary.self && dict?.classForCoder != [String:String].self{//传入的不是字典不允许转换
             return Optional.none
         }
         let model = self.init()
@@ -65,7 +71,7 @@ public extension NSObject {
         }
         //获取所有的属性
         let properties = self.allProperties(resultKeyToObjKeyArr:resultKeyToObjKeyArr)
-        model.setValuesForProperties(properties: properties, dict: keyValue!)
+        model.setValuesForProperties(properties: properties, dict: dict!)
         return model
     }
     //    //把一个字典数组转成一个模型数组
@@ -84,14 +90,14 @@ public extension NSObject {
     //        return temp
     //    }
     //把一个字典里的值赋给一个对象的值
-    func setValuesForProperties(properties:[RutimeProperty]?,dict:NSDictionary){
+    internal func setValuesForProperties(properties:[RutimeProperty]?,dict:NSDictionary){
         //判断属性数组是否存在
         if let _ = properties{
             for property in properties!{
                 //判断该属性是否属于Foundtation框架
-                if property.isFromFoundtion! {
+                if property.isFromFoundtion {
                     if let valueArrOrDict = dict[property.propertyNameKey]{
-                        if property.isArray!  && valueArrOrDict is NSArray{//判断是否是数组
+                        if property.isArray  && valueArrOrDict is NSArray{//判断是否是数组
                             self.analysisArr(valueArr: valueArrOrDict as AnyObject,property:property)//调用解析数组的方法
                         }else if valueArrOrDict is NSDictionary{ //是字典
                             let obj = getClassWitnClassName(name: property.code! as String)//为model类赋值
@@ -113,7 +119,7 @@ public extension NSObject {
             }
         }
     }
-    func analysisArr(valueArr:AnyObject,property:RutimeProperty) {
+    internal func analysisArr(valueArr:AnyObject,property:RutimeProperty) {
         //把字典数组转换成模型数组
         let arr:NSMutableArray = NSMutableArray()
         var className:String? = nil
@@ -147,7 +153,7 @@ public extension NSObject {
         }
     }
     
-    class func allProperties(resultKeyToObjKeyArr:[[String:String]]?) -> [RutimeProperty]?{
+    internal  class func allProperties(resultKeyToObjKeyArr:[[String:String]]?) -> [RutimeProperty]?{
         let className = NSString.init(cString: class_getName(self), encoding: String.Encoding.utf8.rawValue)
         if className?.length == 0 || className!.isEqual(to: "NSObject"){//不用为NSObject的属性赋值
             return nil
@@ -174,15 +180,15 @@ class RutimeProperty:NSObject{
     var propertyName:NSString!  //属性名字 可能是id
     var propertyNameKey:NSString!  //属性名字 转换后的名字 id -> ID
     
-    var property:objc_property_t? //属性
+    var property:objc_property_t //属性
     
     var code:NSString?  //类名字
     
     var typeClass:AnyObject?//类的类型
     
-    var isFromFoundtion:Bool? = true//是否属于Foundtation框架
+    var isFromFoundtion:Bool = true//是否属于Foundtation框架
     
-    var isArray:Bool? = false//是否是数组
+    var isArray:Bool = false//是否是数组
     
     var arrayClass:AnyObject? //数组里面存放的类型
     
